@@ -4,15 +4,15 @@
 
 ### 구현한 API
 
-GET /podcasts
-POST /podcasts
-GET /podcasts/:id
-PATCH /podcasts/:id
-DELETE /podcasts/:id
-GET /podcasts/:id/episodes
-POST /podcasts/:id/episodes
-PATCH /podcasts/:id/episodes/:episodeId
-DELETE /podcasts/:id/episodes/:episodeId
+GET /podcasts <br>
+POST /podcasts <br>
+GET /podcasts/:id <br>
+PATCH /podcasts/:id <br>
+DELETE /podcasts/:id <br>
+GET /podcasts/:id/episodes <br>
+POST /podcasts/:id/episodes <br>
+PATCH /podcasts/:id/episodes/:episodeId <br>
+DELETE /podcasts/:id/episodes/:episodeId <br>
 
 ### 추가로 적용한 것! - Pipe, validation decorator
 
