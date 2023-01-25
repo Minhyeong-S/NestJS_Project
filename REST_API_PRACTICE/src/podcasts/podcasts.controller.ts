@@ -67,21 +67,20 @@ export class PodcastsController {
 
   // Episode 수정
   @Patch('/:id/episodes/:episodeId')
-  updateEpisode(@Param() params, @Body() updateEpisodeDto: UpdateEpisodeDto) {
-    const { id, episodeId } = params;
-    return this.podcastsService.updateEpisode(
-      { id: +id, episodeId: +episodeId },
-      updateEpisodeDto,
-    );
+  updateEpisode(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('episodeId', ParseIntPipe) episodeId: number,
+    @Body() updateEpisodeDto: UpdateEpisodeDto,
+  ) {
+    return this.podcastsService.updateEpisode(id, episodeId, updateEpisodeDto);
   }
 
   // Episode 삭제
   @Delete('/:id/episodes/:episodeId')
-  deleteEpisode(@Param() params) {
-    const { id, episodeId } = params;
-    return this.podcastsService.deleteEpisode({
-      id: +id,
-      episodeId: +episodeId,
-    });
+  deleteEpisode(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('episodeId', ParseIntPipe) episodeId: number,
+  ) {
+    return this.podcastsService.deleteEpisode(id, episodeId);
   }
 }

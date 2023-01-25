@@ -72,7 +72,11 @@ export class PodcastsService {
   }
 
   // Episode 수정
-  updateEpisode({ id, episodeId }, updateEpisodeDto: UpdateEpisodeDto) {
+  updateEpisode(
+    id: number,
+    episodeId: number,
+    updateEpisodeDto: UpdateEpisodeDto,
+  ): void {
     const podcast = this.getOnePodcast(id);
     const episode = this.findOneEpisode(podcast, episodeId);
     podcast.episodes = podcast.episodes.filter(
@@ -90,8 +94,7 @@ export class PodcastsService {
   }
 
   // Episode 삭제
-  deleteEpisode({ id, episodeId }) {
-    console.log('타입확인', typeof id, typeof episodeId);
+  deleteEpisode(id: number, episodeId: number): void {
     const podcast = this.getOnePodcast(id);
     const episode = this.findOneEpisode(podcast, episodeId);
 
