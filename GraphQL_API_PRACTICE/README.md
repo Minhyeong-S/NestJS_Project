@@ -1,8 +1,12 @@
-## [NestJS] REST API 구현 연습
+## [NestJS] REST API => GraphQL API 로 마이그레이션
 
 (DB는 array를 이용한 fake DB)
 
-### 구현한 API
+### podcast/podcasts.resolver.ts
+
+PodcastsController --> PodcastsResolver
+
+### 변경한 API
 
 GET /podcasts <br>
 POST /podcasts <br>
