@@ -7,8 +7,8 @@
 
 ## GraphQL API
 
-- _** 모든 Podcasts 조회**_
-- _** 특정 Podcast 조회**_
-- _** Podcast 생성**_
-- _** Podcast 수정**_
-- _** Podcast 삭제**_
+- _모든 Podcasts 조회_
+- _특정 Podcast 조회_
+- _Podcast 생성_
+- _Podcast 수정_
+- _Podcast 삭제_
