@@ -1,8 +1,12 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreatePodcastDto } from './dtos/create-podcast.dto';
-import { CoreOutput } from './dtos/output.dto';
-import { PodcastOutput, PodcastSearchInput } from './dtos/podcast.dto';
-import { UpdatePodcastDto } from './dtos/update-podcast.dto';
+import { CreateEpisodeDto, CreatePodcastDto } from './dtos/create.dto';
+import { CoreOutput, EpisodesOutput, PodcastOutput } from './dtos/output.dto';
+import {
+  EpisodeSearchInput,
+  EpisodesSearchInput,
+  PodcastSearchInput,
+} from './dtos/search.dto';
+import { UpdateEpisodeInput, UpdatePodcastDto } from './dtos/update.dto';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastsService } from './podcasts.service';
 
@@ -10,6 +14,7 @@ import { PodcastsService } from './podcasts.service';
 export class PodcastsResolver {
   constructor(private readonly podcastsService: PodcastsService) {}
 
+  // Podcast
   @Query((returns) => [Podcast])
   getAllPodcasts(): Promise<Podcast[]> {
     return this.podcastsService.getAllPodcasts();
@@ -41,5 +46,34 @@ export class PodcastsResolver {
     @Args('input') updatePodcastDto: UpdatePodcastDto,
   ): Promise<CoreOutput> {
     return await this.podcastsService.updatePodcast(updatePodcastDto);
+  }
+
+  // Episode
+
+  @Query((returns) => EpisodesOutput)
+  async getAllEpisodes(
+    @Args('input') episodesSearchInput: EpisodesSearchInput,
+  ): Promise<EpisodesOutput> {
+    return await this.podcastsService.getAllEpisodes(episodesSearchInput);
+  }
+
+  @Mutation((returns) => CoreOutput)
+  async createEpisode(
+    @Args('input') createEpisodeDto: CreateEpisodeDto,
+  ): Promise<CoreOutput> {
+    return await this.podcastsService.createEpisode(createEpisodeDto);
+  }
+
+  @Mutation((returns) => CoreOutput)
+  async deleteEpisode(
+    @Args('input') episodeSearchInput: EpisodeSearchInput,
+  ): Promise<CoreOutput> {
+    return await this.podcastsService.deleteEpisode(episodeSearchInput);
+  }
+  @Mutation((returns) => CoreOutput)
+  async updateEpisode(
+    @Args('input') updateEpisodeInput: UpdateEpisodeInput,
+  ): Promise<CoreOutput> {
+    return await this.podcastsService.updateEpisode(updateEpisodeInput);
   }
 }

@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 @InputType()
 export class CreatePodcastDto {
@@ -10,4 +10,11 @@ export class CreatePodcastDto {
   @Field((type) => String)
   @IsString()
   readonly category: string;
+}
+
+@InputType()
+export class CreateEpisodeDto extends CreatePodcastDto {
+  @Field((type) => Number)
+  @IsNumber()
+  podcastId: number;
 }

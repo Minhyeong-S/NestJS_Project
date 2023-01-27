@@ -1,8 +1,9 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
 import { IsString, IsNumber } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Episode } from './episode.entity';
 
-@InputType({ isAbstract: true })
+@InputType('PodcastInput', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Podcast {
@@ -26,6 +27,7 @@ export class Podcast {
   @IsNumber()
   rating: number;
 
-  //   @Field((_) => [Episode])
-  //   episodes: Episode[];
+  @OneToMany((type) => Episode, (episode) => episode.podcast, { eager: true })
+  @Field((type) => [Episode])
+  episodes: Episode[];
 }
