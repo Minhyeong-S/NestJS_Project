@@ -1,3 +1,1 @@
-### NestJS 연습 공간
-
-공부한 내용 클론코딩이 아니라 실제로 적용해보기.
+### NesJS, GraphQL, TypeORM 의 적용과 Docker를 통한 EC2 배포를 목표로 한 작은 개인 프로젝트
