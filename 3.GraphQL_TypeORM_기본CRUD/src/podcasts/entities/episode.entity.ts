@@ -18,9 +18,9 @@ export class Episode extends CoreEntity {
   @IsString()
   category: string;
 
-  @Column()
-  @Field((_) => Number)
-  podcastId: number;
+  // @Column()
+  // @Field((_) => Number)
+  // podcastId: number;
 
   @Field((type) => Podcast)
   @ManyToOne((type) => Podcast, (podcast) => podcast.episodes, {
