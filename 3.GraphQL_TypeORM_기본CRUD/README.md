@@ -13,6 +13,7 @@
 <br>
 
 ## GraphQL API
+https://www.notion.so/GraphQL-API-58b85e37b0b540128e402d90061f3bfb
 
 - _모든 Podcasts 조회_
 - _특정 Podcast 조회_
