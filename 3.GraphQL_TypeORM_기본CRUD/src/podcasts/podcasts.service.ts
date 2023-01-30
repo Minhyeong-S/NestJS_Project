@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CoreOutput } from 'src/common/dtos/output.dto';
+
 import { Repository } from 'typeorm';
 import { CreateEpisodeDto, CreatePodcastDto } from './dtos/create.dto';
-import { CoreOutput, EpisodesOutput, PodcastOutput } from './dtos/output.dto';
+import {
+  EpisodesOutput,
+  PodcastOutput,
+  PodcastsOutput,
+} from './dtos/output.dto';
 import {
   EpisodeSearchInput,
   EpisodesSearchInput,
@@ -23,8 +29,22 @@ export class PodcastsService {
 
   // Podcast
 
-  async getAllPodcasts(): Promise<Podcast[]> {
-    return await this.podcastsRepository.find();
+  async getAllPodcasts(): Promise<PodcastsOutput> {
+    try {
+      const podcasts = await this.podcastsRepository.find({
+        relations: ['episodes'],
+        order: {
+          id: 'ASC',
+          episodes: { id: 'ASC' },
+        },
+      });
+      return { ok: true, podcasts };
+    } catch (error) {
+      return {
+        ok: false,
+        error: error.message,
+      };
+    }
   }
 
   async createPodcast(createPodcastDto: CreatePodcastDto): Promise<CoreOutput> {
@@ -39,33 +59,63 @@ export class PodcastsService {
   }
 
   async getPodcast({ id }: PodcastSearchInput): Promise<PodcastOutput> {
-    const podcast = await this.podcastsRepository.findOne({ where: { id } });
-    if (!podcast) {
-      return { ok: false, error: `Podcast Not found with id : ${id}` };
+    try {
+      const podcast = await this.podcastsRepository.findOne({
+        where: { id },
+        relations: ['episodes'],
+      });
+      if (!podcast) {
+        return { ok: false, error: `Podcast Not found with id : ${id}` };
+      }
+      return {
+        ok: true,
+        podcast,
+      };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: error.message };
     }
-    return {
-      podcast,
-      ok: true,
-    };
   }
 
   async deletePodcast({ id }: PodcastSearchInput): Promise<CoreOutput> {
-    const deleteResult = await this.podcastsRepository.delete(id);
-    if (deleteResult.affected === 0) {
-      return { ok: false, error: `Podcast Not found with id : ${id}` };
+    try {
+      const deleteResult = await this.podcastsRepository.delete(id);
+      if (deleteResult.affected === 0) {
+        return { ok: false, error: `Podcast Not found with id : ${id}` };
+      }
+      return { ok: true };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: error.message };
     }
-    return { ok: true };
   }
 
   async updatePodcast({
     id,
     ...updateData
   }: UpdatePodcastDto): Promise<CoreOutput> {
-    const updateResult = await this.podcastsRepository.update(id, updateData);
-    if (updateResult.affected === 0) {
-      return { ok: false, error: `Podcast Not found with id : ${id}` };
+    try {
+      // 방법 2. save()
+      const { ok, error, podcast } = await this.getPodcast({ id });
+      if (error) {
+        return { ok, error };
+      }
+      this.podcastsRepository.save({ ...podcast, ...updateData });
+      return { ok: true };
+      //
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: error.message };
     }
-    return { ok: true };
+
+    // 방법 1. update()
+    /*
+       const updateResult = await this.podcastsRepository.update(id, updateData);
+      if (updateResult.affected === 0) {
+        return { ok: false, error: `Podcast Not found with id : ${id}` };
+      }
+      return { ok: true };
+      */
   }
 
   // Episode
@@ -73,29 +123,53 @@ export class PodcastsService {
   async getAllEpisodes({
     podcastId,
   }: EpisodesSearchInput): Promise<EpisodesOutput> {
-    const { podcast, ok, error } = await this.getPodcast({ id: podcastId });
-    if (error) {
-      return { ok, error };
+    try {
+      // 방법 2
+      const { ok, error } = await this.getPodcast({ id: podcastId });
+      if (error) {
+        return { ok, error };
+      }
+      const episodes = await this.episodesRepository.find({
+        where: { podcast: { id: podcastId } },
+        order: { id: 'ASC' },
+      });
+      return { ok: true, episodes };
+      //
+    } catch (error) {
+      return {
+        ok: false,
+        error: error.message,
+      };
     }
-    // 관계 설정을 해주긴 했는데... 그렇다고 episode를 podcast 테이블에서 조회하는게 맞을까? 음...
-    return { ok: true, episodes: podcast.episodes };
+
+    // 방법 1
+    /*
+      const { podcast, ok, error } = await this.getPodcast({ id: podcastId });
+      if (error) {    
+        return { ok, error };
+      }
+      // 관계 설정을 해주긴 했는데... 그렇다고 episode를 podcast 테이블에서 조회하는게 맞을까? 음...
+      return { ok: true, episodes: podcast.episodes };
+    
+      */
   }
 
   async createEpisode({
     podcastId,
     ...data
   }: CreateEpisodeDto): Promise<CoreOutput> {
-    const { ok, error } = await this.getPodcast({ id: podcastId });
-    if (error) {
-      return { ok, error };
-    }
-    const newEpisode = this.episodesRepository.create({
-      podcastId,
-      ...data,
-    });
     try {
+      const { podcast, ok, error } = await this.getPodcast({ id: podcastId });
+      if (error) {
+        return { ok, error };
+      }
+      const newEpisode = this.episodesRepository.create({
+        ...data,
+        podcast,
+      });
       await this.episodesRepository.save(newEpisode);
       return { ok: true };
+      //
     } catch (error) {
       console.log(error);
       return { ok: false, error: error.message };
@@ -106,15 +180,24 @@ export class PodcastsService {
     podcastId,
     episodeId,
   }: EpisodeSearchInput): Promise<CoreOutput> {
-    const { ok, error } = await this.getPodcast({ id: podcastId });
-    if (error) {
-      return { ok, error };
+    try {
+      const { ok, error } = await this.getPodcast({ id: podcastId });
+      if (error) {
+        return { ok, error };
+      }
+      const deleteResult = await this.episodesRepository.delete(episodeId);
+      if (deleteResult.affected === 0) {
+        return { ok: false, error: `Episode Not found with id : ${episodeId}` };
+      }
+      return { ok: true };
+      //
+    } catch (error) {
+      console.log(error);
+      return {
+        ok: false,
+        error: error.message,
+      };
     }
-    const deleteResult = await this.episodesRepository.delete(episodeId);
-    if (deleteResult.affected === 0) {
-      return { ok: false, error: `Episode Not found with id : ${episodeId}` };
-    }
-    return { ok: true };
   }
 
   async updateEpisode({
@@ -122,11 +205,31 @@ export class PodcastsService {
     episodeId,
     ...updateData
   }: UpdateEpisodeInput): Promise<CoreOutput> {
-    console.log(updateData);
-    const { ok, error } = await this.getPodcast({ id: podcastId });
-    if (error) {
-      return { ok, error };
+    try {
+      const { ok, error } = await this.getPodcast({ id: podcastId });
+      if (error) {
+        return { ok, error };
+      }
+      // 방법 2. save()
+      const episode = await this.episodesRepository.findOne({
+        where: { podcast: { id: podcastId }, id: episodeId },
+      });
+      if (!episode) {
+        return {
+          ok: false,
+          error: `Episode not found with episodeId : ${episodeId}`,
+        };
+      }
+      this.episodesRepository.save({ ...episode, ...updateData });
+      return { ok: true };
+      //
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: error.message };
     }
+
+    // 방법 1. update()
+    /*
     const updateResult = await this.episodesRepository.update(
       episodeId,
       updateData,
@@ -135,5 +238,6 @@ export class PodcastsService {
       return { ok: false, error: `Episode Not found with id : ${episodeId}` };
     }
     return { ok: true };
+    */
   }
 }

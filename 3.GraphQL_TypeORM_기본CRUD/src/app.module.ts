@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { PodcastsModule } from './podcasts/podcasts.module';
 import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
+import { CommonModule } from './common/common.module';
+import { CoreEntity } from './common/entities/core.entity';
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { Episode } from './podcasts/entities/episode.entity';
       entities: [Podcast, Episode],
     }),
     PodcastsModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],

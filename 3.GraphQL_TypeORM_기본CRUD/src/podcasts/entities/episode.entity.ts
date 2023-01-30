@@ -1,22 +1,13 @@
 import { InputType, ObjectType, Field } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  RelationId,
-} from 'typeorm';
+import { CoreEntity } from 'src/common/entities/core.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { Podcast } from './podcast.entity';
 
 @InputType('EpisodeInput', { isAbstract: true })
 @ObjectType()
 @Entity()
-export class Episode {
-  @PrimaryGeneratedColumn()
-  @Field((_) => Number)
-  id: number;
-
+export class Episode extends CoreEntity {
   @Column()
   @Field((_) => String)
   @IsString()
@@ -31,7 +22,9 @@ export class Episode {
   @Field((_) => Number)
   podcastId: number;
 
-  @ManyToOne((type) => Podcast, (podcast) => podcast.episodes)
   @Field((type) => Podcast)
+  @ManyToOne((type) => Podcast, (podcast) => podcast.episodes, {
+    onDelete: 'CASCADE', // 연결된 podcast가 삭제되면 episode도 같이 삭제된다.
+  })
   podcast: Podcast;
 }

@@ -1,23 +1,28 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import { CreateEpisodeDto, CreatePodcastDto } from './dtos/create.dto';
-import { CoreOutput, EpisodesOutput, PodcastOutput } from './dtos/output.dto';
+import {
+  EpisodesOutput,
+  PodcastOutput,
+  PodcastsOutput,
+} from './dtos/output.dto';
 import {
   EpisodeSearchInput,
   EpisodesSearchInput,
   PodcastSearchInput,
 } from './dtos/search.dto';
 import { UpdateEpisodeInput, UpdatePodcastDto } from './dtos/update.dto';
+import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastsService } from './podcasts.service';
 
-@Resolver()
+@Resolver((of) => Podcast)
 export class PodcastsResolver {
   constructor(private readonly podcastsService: PodcastsService) {}
 
-  // Podcast
-  @Query((returns) => [Podcast])
-  getAllPodcasts(): Promise<Podcast[]> {
-    return this.podcastsService.getAllPodcasts();
+  @Query((returns) => PodcastsOutput)
+  async getAllPodcasts(): Promise<PodcastsOutput> {
+    return await this.podcastsService.getAllPodcasts();
   }
 
   @Mutation((returns) => CoreOutput)
@@ -47,8 +52,11 @@ export class PodcastsResolver {
   ): Promise<CoreOutput> {
     return await this.podcastsService.updatePodcast(updatePodcastDto);
   }
+}
 
-  // Episode
+@Resolver((of) => Episode)
+export class EpisodeResolver {
+  constructor(private readonly podcastsService: PodcastsService) {}
 
   @Query((returns) => EpisodesOutput)
   async getAllEpisodes(

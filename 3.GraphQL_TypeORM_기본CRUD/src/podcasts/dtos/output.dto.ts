@@ -1,18 +1,12 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { IsString, IsBoolean, IsOptional } from 'class-validator';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Episode } from '../entities/episode.entity';
 import { Podcast } from '../entities/podcast.entity';
 
 @ObjectType()
-export class CoreOutput {
-  @Field((type) => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  error?: string;
-
-  @Field((type) => Boolean)
-  @IsBoolean()
-  ok: boolean;
+export class PodcastsOutput extends CoreOutput {
+  @Field((type) => [Podcast], { nullable: true })
+  podcasts?: Podcast[];
 }
 
 @ObjectType()

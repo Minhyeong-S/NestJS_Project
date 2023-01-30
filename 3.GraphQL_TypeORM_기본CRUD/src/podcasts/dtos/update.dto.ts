@@ -1,12 +1,5 @@
-import {
-  Field,
-  InputType,
-  ObjectType,
-  OmitType,
-  PartialType,
-} from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
-import { In } from 'typeorm';
+import { Field, InputType, OmitType, PartialType } from '@nestjs/graphql';
+import { IsNumber } from 'class-validator';
 import { Episode } from '../entities/episode.entity';
 import { Podcast } from '../entities/podcast.entity';
 
@@ -18,7 +11,7 @@ export class UpdatePodcastDto extends PartialType(Podcast) {
 }
 
 @InputType()
-export class UpdateEpisodeInput extends PartialType(OmitType(Episode, ['id'])) {
+export class UpdateEpisodeInput extends PartialType(Episode) {
   @Field((type) => Number)
   @IsNumber()
   podcastId: number;
