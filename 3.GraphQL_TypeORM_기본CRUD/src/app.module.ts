@@ -1,21 +1,38 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApolloDriver } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
 import { PodcastsModule } from './podcasts/podcasts.module';
 import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
 import { CommonModule } from './common/common.module';
-import { CoreEntity } from './common/entities/core.entity';
+import { UsersModule } from './users/users.module';
+import { JwtModule } from './jwt/jwt.module';
+import { User } from './users/entities/user.entity';
+import { JwtMiddleware } from './jwt/jwt.middleware';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: '.env.dev',
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('dev', 'prod'),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.string().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
+        SECRET_KEY: Joi.string().required(),
+      }),
     }),
-    GraphQLModule.forRoot({ autoSchemaFile: true, driver: ApolloDriver }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -25,12 +42,30 @@ import { CoreEntity } from './common/entities/core.entity';
       database: process.env.DB_NAME,
       logging: true,
       synchronize: true,
-      entities: [Podcast, Episode],
+      entities: [Podcast, Episode, User],
+    }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: true,
+      driver: ApolloDriver,
+      context: ({ req }) => ({ user: req['user'] }),
+    }),
+    JwtModule.forRoot({
+      secretKey: process.env.SECRET_KEY,
     }),
     PodcastsModule,
     CommonModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  // Middleware 설정
+  configure(consumer: MiddlewareConsumer) {
+    // 모든 routes에 미들웨어 적용하기
+    consumer.apply(JwtMiddleware).forRoutes({
+      path: '/graphql',
+      method: RequestMethod.ALL,
+    });
+  }
+}
