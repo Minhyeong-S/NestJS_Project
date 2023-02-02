@@ -5,7 +5,11 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context).getContext();
-    const user = gqlContext('user');
-    if (!user) return false;
+    const user = gqlContext['user'];
+    console.log(user);
+    if (!user) {
+      return false;
+    }
+    return true;
   }
 }
