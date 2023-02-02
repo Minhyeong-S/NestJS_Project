@@ -18,10 +18,6 @@ export class Episode extends CoreEntity {
   @IsString()
   category: string;
 
-  // @Column()
-  // @Field((_) => Number)
-  // podcastId: number;
-
   @Field((type) => Podcast)
   @ManyToOne((type) => Podcast, (podcast) => podcast.episodes, {
     onDelete: 'CASCADE', // 연결된 podcast가 삭제되면 episode도 같이 삭제된다.

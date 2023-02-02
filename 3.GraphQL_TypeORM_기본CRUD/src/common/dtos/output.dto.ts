@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
-@ObjectType()
+@ObjectType({ isAbstract: true })
 export class CoreOutput {
   @Field((type) => Boolean)
   @IsBoolean()

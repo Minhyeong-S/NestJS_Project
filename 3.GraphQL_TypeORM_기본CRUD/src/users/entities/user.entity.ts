@@ -18,7 +18,7 @@ enum UserRole {
 registerEnumType(UserRole, { name: 'UserRole' });
 
 @InputType({ isAbstract: true })
-@ObjectType()
+@ObjectType({ isAbstract: true })
 @Entity()
 export class User extends CoreEntity {
   @Column()
@@ -26,7 +26,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field((type) => String)
   @IsString()
   password: string;
@@ -39,11 +39,13 @@ export class User extends CoreEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    try {
-      this.password = await bcrypt.hash(this.password, 10);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException();
+    if (this.password) {
+      try {
+        this.password = await bcrypt.hash(this.password, 10);
+      } catch (error) {
+        console.log(error);
+        throw new InternalServerErrorException();
+      }
     }
   }
 

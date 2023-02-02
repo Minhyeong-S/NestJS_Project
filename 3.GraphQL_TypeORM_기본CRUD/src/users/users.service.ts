@@ -41,7 +41,10 @@ export class UsersService {
   // 로그인
   async login({ email, password }: LoginInput): Promise<LoginOutput> {
     // 1. DB에서 해당 이메일을 가진 유저 존재 확인
-    const user = await this.users.findOne({ where: { email } });
+    const user = await this.users.findOne({
+      where: { email },
+      select: ['id', 'password'],
+    });
     if (!user) {
       return {
         ok: false,
@@ -66,11 +69,17 @@ export class UsersService {
 
   // 유저 정보 조회
   async findById(id: number): Promise<User> {
-    return await this.users.findOne({ where: { id } });
+    return await this.users.findOne({
+      where: { id },
+      // select: ['id', 'email', 'password', 'role', 'createdAt', 'updatedAt'],
+    });
   }
 
   // 유저 정보 수정
-  async editProfile(userId: number, { email, password }: EditProfileInput) {
+  async editProfile(
+    userId: number,
+    { email, password }: EditProfileInput,
+  ): Promise<User> {
     // AuthGuards 를 통과한 상태이므로 userId에 해당하는 user는 무조건 있다고 판단
     const user = await this.findById(userId);
     if (email) {

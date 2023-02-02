@@ -1,5 +1,5 @@
 import { Field, InputType, PickType } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber } from 'class-validator';
 import { Episode } from '../entities/episode.entity';
 import { Podcast } from '../entities/podcast.entity';
 
