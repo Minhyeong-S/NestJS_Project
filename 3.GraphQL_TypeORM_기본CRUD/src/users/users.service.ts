@@ -6,6 +6,7 @@ import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
+import { EditProfileInput } from './dtos/edit-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -56,7 +57,7 @@ export class UsersService {
       };
     }
     // 3. JWT token 전달
-    const token = await this.jwtService.sign(user.id);
+    const token = this.jwtService.sign(user.id);
     return {
       ok: true,
       token,
@@ -66,5 +67,18 @@ export class UsersService {
   // 유저 정보 조회
   async findById(id: number): Promise<User> {
     return await this.users.findOne({ where: { id } });
+  }
+
+  // 유저 정보 수정
+  async editProfile(userId: number, { email, password }: EditProfileInput) {
+    // AuthGuards 를 통과한 상태이므로 userId에 해당하는 user는 무조건 있다고 판단
+    const user = await this.findById(userId);
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    return await this.users.save(user);
   }
 }

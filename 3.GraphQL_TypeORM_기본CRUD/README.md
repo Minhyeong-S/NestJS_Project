@@ -13,9 +13,11 @@
 <br>
 
 ## GraphQL API
+
 https://www.notion.so/GraphQL-API-58b85e37b0b540128e402d90061f3bfb
 
 ### Podcast
+
 - _모든 Podcasts 조회_
 - _특정 Podcast 조회_
 - _Podcast 생성_
@@ -23,11 +25,15 @@ https://www.notion.so/GraphQL-API-58b85e37b0b540128e402d90061f3bfb
 - _Podcast 삭제_
 
 ### Episode
+
 - _모든 Episodes 조회_
 - _Episode 생성_
 - _Episode 수정_
 - _Episode 삭제_
 
 ### User
+
 - _회원 가입 : 비밀번호 hash화_
 - _로그인 : JWT 토큰 발급 및 헤더의 토큰 통한 인증_
+- _유저(본인) 프로필 조회: Guard 와 custom Decorator를 통해 token 정보로부터 유저 정보 가져오기_
+- _프로필 수정 : JWT 토큰을 통해 인증된 유저만 수정 가능_
