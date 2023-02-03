@@ -2,8 +2,8 @@ import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 import { User } from '../entities/user.entity';
 
-// @InputType({ isAbstract: true })
-// @ObjectType({ isAbstract: true })
+// @InputType('SeeProfile', { isAbstract: true })
+// @ObjectType()
 // export class SeeProfileUserDto extends OmitType(User, ['password']) {}
 
 @ArgsType()
