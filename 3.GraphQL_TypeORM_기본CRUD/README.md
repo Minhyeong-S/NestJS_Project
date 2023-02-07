@@ -37,3 +37,14 @@ https://www.notion.so/GraphQL-API-58b85e37b0b540128e402d90061f3bfb
 - _로그인 : JWT 토큰 발급 및 헤더의 토큰 통한 인증_
 - _유저(본인) 프로필 조회: Guard 와 custom Decorator를 통해 token 정보로부터 유저 정보 가져오기_
 - _프로필 수정 : JWT 토큰을 통해 인증된 유저만 수정 가능_
+
+<br>
+
+## UsersModule에 대한 테스트
+
+### UsersService
+
+- users.service.spec.ts 파일 생성 및 테스트모듈 생성
+
+- _**Unit Test**_
+  - createAccount() : 내부 각 메소드의 정상 실행 여부, argument, 성공/실패에 따른 결과 테스트
