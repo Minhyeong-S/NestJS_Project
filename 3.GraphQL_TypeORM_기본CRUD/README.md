@@ -47,4 +47,7 @@ https://www.notion.so/GraphQL-API-58b85e37b0b540128e402d90061f3bfb
 - users.service.spec.ts 파일 생성 및 테스트모듈 생성
 
 - _**Unit Test**_
-  - createAccount() : 내부 각 메소드의 정상 실행 여부, argument, 성공/실패에 따른 결과 테스트
+  - `createAccount()`
+  - `login()`
+  - `findById()`
+  - `editProfile()`

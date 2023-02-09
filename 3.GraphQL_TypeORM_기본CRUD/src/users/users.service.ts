@@ -61,19 +61,20 @@ export class UsersService {
       //
     } catch (error) {
       console.log(error);
-      return { ok: false, error: error.message };
+      return { ok: false, error: "Couldn't login" };
     }
   }
 
   // 유저 정보 조회
   async findById(id: number): Promise<SeeProfileOutput> {
     try {
-      const user = await this.users.findOne({ where: { id } });
-      if (!user) throw new Error('User Not Found');
+      // findOneOrFail 은 user를 찾지 못하면 에러를 발생시킨다.
+      const user = await this.users.findOneOrFail({ where: { id } });
       return { ok: true, user };
+      //
     } catch (error) {
       console.log(error);
-      return { ok: false, error: error.message };
+      return { ok: false, error: 'User Not Found' };
     }
   }
 
@@ -95,7 +96,7 @@ export class UsersService {
       return { ok: true };
     } catch (error) {
       console.log(error);
-      return { ok: false, error: error.message };
+      return { ok: false, error: 'Could not update profile.' };
     }
   }
 }
