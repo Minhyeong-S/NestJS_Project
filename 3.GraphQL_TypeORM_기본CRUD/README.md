@@ -40,7 +40,7 @@ https://www.notion.so/GraphQL-API-58b85e37b0b540128e402d90061f3bfb
 
 <br>
 
-## UsersModule에 대한 테스트
+## 테스트 코드 작성
 
 ### UsersService
 
@@ -51,3 +51,11 @@ https://www.notion.so/GraphQL-API-58b85e37b0b540128e402d90061f3bfb
   - `login()`
   - `findById()`
   - `editProfile()`
+
+### JwtService
+
+- 외부 라이브러리 jsonwebtoken 에 대한 mocking
+
+- _**Unit Test**_
+  - `sign()`
+  - `verify()`
